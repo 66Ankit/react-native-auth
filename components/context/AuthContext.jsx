@@ -36,10 +36,13 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (email, password) => {
     try {
-      // return await axios.post('url',{email,password});
-      return { data: { token: "ABC" } };
-    } catch (error) {
-      console.log(err);
+      //   console.log(email, password);
+      return await axios.post("http://localhost:8761/auth/register", {
+        email,
+        password,
+      });
+    } catch (err) {
+      //   console.log(error);
 
       return { msg: err, error: true };
     }
@@ -47,21 +50,24 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      //   const response = await axios.post("url", { email, password });
-      const response = { data: { token: "ABC" } };
+      const response = await axios.post("http://localhost:8761/auth/token", {
+        email,
+        password,
+      });
 
       setAuthState({
-        token: response.data.token,
+        token: response.data,
         authenticated: true,
       });
 
       axios.defaults.headers.common[
         "Authorization"
-      ] = `Bearer ${response.data.token}`;
-      await SecureStore.setItemAsync(TOKEN_KEY, response.data.token);
+      ] = `Bearer ${response.data}`;
+      //   console.log(response.data);
+      await SecureStore.setItemAsync(TOKEN_KEY, response.data);
       return response;
-    } catch (error) {
-      console.log(err);
+    } catch (err) {
+      //   console.log(err);
       return { msg: err, error: true };
     }
   };
